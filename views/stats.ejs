@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <title>Stats</title>
+        </head>
+        <body>
+                <h1>Stats</h1>
+                <br>
+		<table>
+               	<% east.forEach(function(team) { %> 
+			<tr>                	
+			<td><%= team.W-L %></td>
+			<td><%= team.PCT %></td>
+			<td><%= team.GB %></td>
+			<td><%= team.STRK %></td>
+			<td><%= team.12 %></td>
+			</tr>
+                <% }); %>
+                </table>
+		<br>
+                <a href='/'>Home</a>
+        </body>
+</html>
+
