@@ -6,18 +6,44 @@
         <body>
                 <h1>Stats</h1>
                 <br>
+		<div id='east'>
+		<h2>Eastern Conference</h2>
 		<table>
-               	<% east.forEach(function(team) { %> 
-			<tr>                	
-			<td><%= team.W-L %></td>
-			<td><%= team.PCT %></td>
-			<td><%= team.GB %></td>
-			<td><%= team.STRK %></td>
-			<td><%= team.12 %></td>
+			<tr>
+			<th>Team</th><th>W-L</th>
+			<th>Win %</th><th>Last 10</th><th>Streak</th>
 			</tr>
-                <% }); %>
+			<% east.forEach(function(team) { %>
+			<tr>                	
+			<td><%= team['W-L'] %></td>
+			<td><%= team['PCT'] %></td>
+			<td><%= team['GB'] %></td>
+			<td><%= team['STRK'] %></td>
+			<td><%= team['12'] %></td>
+			</tr>
+                	<% }) %>
                 </table>
+		</div>
 		<br>
+		<div id='west'>
+		<h2>Western Conference</h2>
+		<table>
+                        <tr>
+                        <th>Team</th><th>W-L</th>
+                        <th>Win %</th><th>Last 10</th><th>Streak</th>
+                        </tr>
+                        <% west.forEach(function(team) { %>
+                        <tr>
+                        <td><%= team['W-L'] %></td>
+                        <td><%= team['PCT'] %></td>
+                        <td><%= team['GB'] %></td>
+                        <td><%= team['STRK'] %></td>
+                        <td><%= team['12'] %></td>
+                        </tr>
+                        <% }) %>
+                </table>
+		</div>
+                <br>
                 <a href='/'>Home</a>
         </body>
 </html>
