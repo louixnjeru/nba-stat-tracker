@@ -17,11 +17,13 @@ db.connect((err) => {
 });
 global.db = db;
 
-
+// Sets up table scraper module
 var scraper = require('table-scraper');
 
+// Sets the year to scrape data for
 var year = 2016;
 
+// SQL query to create the table
 createTableQuery = `CREATE TABLE ${year}totals (
 id INT AUTO_INCREMENT, 
 name VARCHAR(100), 
@@ -54,40 +56,50 @@ TOvs INT(5),
 Fouls INT(5), 
 Points INT(5), 
 inHOF BOOLEAN,
+Year INT(5) NOT NULL DEFAULT ${year},
 PRIMARY KEY(id))
 ;`
 
+// SQL query to create entry for each player
 insertTableQuery = `INSERT INTO ${year}totals (name,position,age,team,gamesPlayed,gamesStarted,minutes,fieldGoals,fieldGoalsAtt,fieldGoalPct,3PfieldGoals,3PfieldGoalsAtt,3PfieldGoalPct,2PfieldGoals,2PfieldGoalsAtt,2PfieldGoalPct,EFFfieldGoalPct,freeThrows,freeThrowsAtt,freeThrowPct,OffRebs,DefRebs,TotRebs,Asts,Stls,Blks,TOvs,Fouls,Points,inHOF) VALUES 
 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
-
+// Scrapes the website to load data into the database
 scraper.get(
 	`https://www.basketball-reference.com/leagues/NBA_${year}_totals.html`
 	).then(function(tableData) {
 	console.log("Table Scraped");
         db.query(createTableQuery);
 	console.log("Database created");
+	// Loops through all the players on the webpage
 	for (player in tableData[0]) {
         	HOF = false;
+		// Array to load stats into
         	playerStats = [];
+		// Loops through all json values in object
         	for (var key in tableData[0][player]) {
                 	if (tableData[0][player].hasOwnProperty(key)) {
                         	newStat = tableData[0][player][key];
-                        	if (!isNaN(tableData[0][player][key]) == true) {
+                        	// If the field is a number, this converts the string
+				if (!isNaN(tableData[0][player][key]) == true) {
                                 	newStat = +tableData[0][player][key];
                         	}
+				// If the name field has a star, this recognises the player as a hall of famer
                         	if (newStat[newStat.length-1] == "*") {
-                                	HOF = true;
+                                	// The field for a hall of famer is set and removes the star from the player name
+					HOF = true;
                                 	newStat = newStat.slice(0,-1);
                         	}
                         	playerStats.push(newStat)
                 	}
         	}
+		// Checks if the player is a hall of famer and adds the final field
         	if (HOF == true) {
                 	playerStats.push(true);
         	} else {
                 	playerStats.push(false);
         	}
+		// Inserts the player field into the year database
         	db.query(insertTableQuery, playerStats);
         }
 	console.log("Database loaded");
