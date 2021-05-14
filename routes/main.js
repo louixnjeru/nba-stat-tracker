@@ -53,6 +53,16 @@ module.exports = function(app)
 	})
         });
 
+	app.get('/name/:player',function(req,res){
+                name = req.params.player;
+                spaceIndex = name.indexOf("-");
+                first = name.slice(0,spaceIndex);
+                last = name.slice(spaceIndex+1,name.length);
+                console.log(first);
+                console.log(last);
+		res.send(`<p>First Name: ${first}</p><p>Last Name: ${last}</p>`);
+	})
+
 	app.get('/player/:first/:last',function(req,res){
 		var sqlQuery = ""
 		for (var year=2016; year<2021; year++){
@@ -64,9 +74,6 @@ module.exports = function(app)
 			if (err) {
 				res.redirect('/usr/174/findPlayer');
 			} else {
-				if (result.length == 0 || result == null) {
-					res.redirect('/usr/174/findPlayer');
-				}
 				res.send(result);
 			}
 		})
@@ -139,5 +146,43 @@ module.exports = function(app)
 	app.post('/player-stats', function(req,res){
 		res.redirect(`/usr/174/player/${req.body.first}/${req.body.last}`);
 	})
+
+	app.get('/compare/:first1/:last1/:first2/:last2',function(req,res){
+                // Select statement for first player
+		var sqlQuery1 = ""
+                for (var year=2016; year<2021; year++){
+                        sqlQuery1 += `select * from ${year}totals where name = "${req.params.first1} ${req.params.last1}" union all `
+                }
+                sqlQuery1 += `select * from 2021totals where name = "${req.params.first1} ${req.params.last1}";`
+                console.log(sqlQuery1)
+		
+		// Select statement for second player
+		var sqlQuery2 = ""
+                for (var year=2016; year<2021; year++){
+                        sqlQuery2 += `select * from ${year}totals where name = "${req.params.first2} ${req.params.last2}" union all `
+                }
+                sqlQuery2 += `select * from 2021totals where name = "${req.params.first2} ${req.params.last2}";`
+                console.log(sqlQuery2)
+		
+		players = []
+		
+                db.query(sqlQuery1, (err,result1) => {
+                        if (err) {
+				console.log(err.index);
+                                res.redirect('/usr/174/findPlayer');
+                        } else {
+				players.push(result1);
+				db.query(sqlQuery2, (err,result2) => {
+                        	if (err) {
+                                	res.redirect('/usr/174/findPlayer');
+                        	} else {
+					players.push(result2);
+                                	console.log(players);
+                                	res.send(players);
+                        	}
+                })
+                        }
+                })
+        })
 
 }

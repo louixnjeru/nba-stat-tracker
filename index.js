@@ -11,17 +11,18 @@ const mysql = require('mysql');
 
 // Sets up access to the SQL Database
 const db = mysql.createConnection ({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'stats'
+	host: 'localhost',
+	user: 'root',
+	password: 'password',
+	database: 'stats',
+	multipleStatements: true
 });
 
 db.connect((err) => {
-    if (err) {
-        throw err;
-    }
-    console.log('Stats Database initialised');
+	if (err) {
+		throw err;
+    	}
+    	console.log('Stats Database initialised');
 });
 global.db = db;
 
