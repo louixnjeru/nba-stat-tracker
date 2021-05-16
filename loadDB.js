@@ -21,7 +21,7 @@ global.db = db;
 var scraper = require('table-scraper');
 
 // Sets the year to scrape data for
-var year = 2016;
+var year = 1954;
 
 // SQL query to create the table
 createTableQuery = `CREATE TABLE ${year}totals (

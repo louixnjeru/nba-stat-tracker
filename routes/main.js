@@ -52,6 +52,34 @@ module.exports = function(app)
 	res.send(players);
 	})
         });
+	
+/*	
+	app.get('/abbv', function(req,res) {
+		var scraper = require('table-scraper');
+                scraper.get(
+		"https://sportsdelve.wordpress.com/abbreviations/"
+		).then(function(tableData) {
+			var teams = []
+			for (var abbv in tableData[2]) {
+				let team = [tableData[2][abbv][0],tableData[2][abbv][1]];
+				teams.push(team);   
+			}
+			sqlQuery = "insert into abbv(abbv,team) values ?"
+			db.query(sqlQuery, [teams]);
+		})
+	})
+*/
+
+	app.get('/team/:teamName/:year',function(req,res){
+		var sqlQuery = `select * from ${req.params.year}totals where team = "${req.params.teamName}";`
+		db.query(sqlQuery, (err,result) => {
+                        if (err) {
+                                res.redirect('/usr/174/');
+                        } else {
+                                res.send(result);
+                        }
+                })
+	})
 
 	app.get('/name/:player',function(req,res){
                 name = req.params.player;
@@ -65,7 +93,7 @@ module.exports = function(app)
 
 	app.get('/player/:first/:last',function(req,res){
 		var sqlQuery = ""
-		for (var year=2016; year<2021; year++){
+		for (var year=1950; year<2021; year++){
 			sqlQuery += `select * from ${year}totals where name = "${req.params.first} ${req.params.last}" union all `
 		}
 		sqlQuery += `select * from 2021totals where name = "${req.params.first} ${req.params.last}";`
@@ -129,7 +157,7 @@ module.exports = function(app)
 	
 	app.post('/playerSearch', function(req,res){
 		var sqlQuery = ""
-                for (var year=2016; year<2021; year++){
+                for (var year=1950; year<2021; year++){
                         sqlQuery += `select * from ${year}totals where name = "${req.body.first} ${req.body.last}" union all `
                 }
                 sqlQuery += `select * from 2021totals where name = "${req.body.first} ${req.body.last}";`
@@ -150,7 +178,7 @@ module.exports = function(app)
 	app.get('/compare/:first1/:last1/:first2/:last2',function(req,res){
                 // Select statement for first player
 		var sqlQuery1 = ""
-                for (var year=2016; year<2021; year++){
+                for (var year=1950; year<2021; year++){
                         sqlQuery1 += `select * from ${year}totals where name = "${req.params.first1} ${req.params.last1}" union all `
                 }
                 sqlQuery1 += `select * from 2021totals where name = "${req.params.first1} ${req.params.last1}";`
@@ -158,7 +186,7 @@ module.exports = function(app)
 		
 		// Select statement for second player
 		var sqlQuery2 = ""
-                for (var year=2016; year<2021; year++){
+                for (var year=1950; year<2021; year++){
                         sqlQuery2 += `select * from ${year}totals where name = "${req.params.first2} ${req.params.last2}" union all `
                 }
                 sqlQuery2 += `select * from 2021totals where name = "${req.params.first2} ${req.params.last2}";`
