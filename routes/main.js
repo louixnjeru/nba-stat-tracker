@@ -166,7 +166,7 @@ module.exports = function(app)
                         if (err) {
                                 res.redirect('/');
                         } else {
-                                res.send(result);
+                                res.send(result);c
                         }
                 })
 	})
@@ -212,5 +212,61 @@ module.exports = function(app)
                         }
                 })
         })
+	
+	app.get('/:year', function(req,res){
+		var prev = req.params.year - 1;
+		
+                // Returns the teams that played in this year
+		teamQuery = `select min(${req.params.year}totals.id) as id, ${req.params.year}totals.team, abbv.team,${req.params.year}totals.year
+		 from ${req.params.year}totals, abbv
+		 where ${req.params.year}totals.team=abbv.abbv
+		 group by ${req.params.year}totals.team,abbv.team,${req.params.year}totals.year;`;
+        	
+		// Returns the top points scorers
+		topPPGQuery = ` select ${req.params.year}totals.name,
+		 ${req.params.year}totals.team,
+		 round(${req.params.year}totals.points/${req.params.year}totals.gamesPlayed,2) as PPG
+		 from ${req.params.year}totals
+		 order by PPG desc limit 10;`;
+
+		// Returns the players who played the most amount of games
+		ironmanQuery = ` select ${req.params.year}totals.name,
+                 ${req.params.year}totals.team, ${req.params.year}totals.gamesPlayed
+		 from ${req.params.year}totals
+		 where ${req.params.year}totals.gamesPlayed = 
+		 (select max(${req.params.year}totals.gamesPlayed) from ${req.params.year}totals)
+		 or ${req.params.year}totals.gamesPlayed >= 82
+		 LIMIT 10;`;
+		
+		// Returns the players whose points improved the most from the previous year
+		improveQuery = ` SELECT ${prev}totals.name,
+		 round(${prev}totals.points/${prev}totals.gamesPlayed,2) AS ${prev}PPG,
+		 ${prev}totals.team AS ${prev}Team,
+		 round((${req.params.year}totals.points/${req.params.year}totals.gamesPlayed),2) AS ${req.params.year} PPG,
+		 ${req.params.year}totals.team AS ${req.params.year}Team,
+		 round((${req.params.year}totals.points/${req.params.year}totals.gamesPlayed) - (${prev}totals.points/${prev}.gamesPlayed),2) AS PPGdifference 
+		 FROM ${prev}totals, ${req.params.year}totals 
+		 WHERE ${prev}totals.name = ${req.params.year}totals.name 
+		 and (${req.params.year}totals.gamesPlayed>0.7*(SELECT max(${req.params.year}totals.gamesPlayed) from ${req.params.year}totals) and ${prev}totals.gamesPlayed>0.7*(SELECT max(${prev}totals.gamesPlayed) from ${prev}totals)) 
+		 AND ${prev}totals.id in (select min(id) from ${prev}totals group by name)
+		 AND ${req.params.year}totals.id in (select min(id) from ${req.params.year}totalstotals group by name)
+		 ORDER BY PPGdifference DESC LIMIT 10`;
+		
+		// Adds the SQL queries together
+		//sqlQuery = teamQuery+topPPGQuery+ironmanQuery;
+		let sqlQuery = topPPGQuery;
+		// If the year is 1950, there are no previous stats to obtain
+		if (req.params.year>1950) {
+			sqlQuery += improveQuery;
+		}
+		
+		db.query(sqlQuery, (err,results) => {
+			if (err) {
+				throw err;
+			} else {
+				res.send(results)
+			}
+		})
+	})
 
 }
