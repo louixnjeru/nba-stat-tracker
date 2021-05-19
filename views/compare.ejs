@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <title><%= player1[0]["name"] %> and <%= player2[0]["name"] %> comparison</title>
+	</head>
+        <body>
+		<h1>Comparing <%= player1[0]["name"] %> and <%= player2[0]["name"] %></h1>
+		<div class='info'>
+			<div class='player-info'>
+				<table class='comparePlayerTable'>
+				<tr><th>Name</th><td><%= player1[0]["name"] %></td></tr>
+				<tr><th>Position</th><td><%= player1[0]["position"] %></td></tr>
+				<tr><th>Last Team</th><td><%= player1[player1.length-1]["team"] %></td></tr>
+				<tr><th>Rookie Season</th><td><%= player1[0]["Year"] %></td></tr>
+				<tr><th>Last Season</th><td><%= player1[player1.length-1]["Year"] %></td></tr>
+				</table>
+			</div>
+			<div class='player-info'>
+				<table class='comparePlayerTable'>
+                		<tr><th>Name</th><td><%= player2[0]["name"] %></td></tr>
+				<tr><th>Position</th><td><%= player2[0]["position"] %></td></tr>
+				<tr><th>Last Team</th><td><%= player2[player2.length-1]["team"] %></td></tr>
+                		<tr><th>Rookie Season</th><td><%= player2[0]["Year"] %></td></tr>
+                		<tr><th>Last Season</th><td><%= player2[player2.length-1]["Year"] %></td></tr>
+                		</table>
+			</div>
+		</div>
+		<div class='stats'>
+		<% playerList.forEach(function(i){%>
+		<div class = 'player-stats-table'>
+		<h2><%= player1[0]["name"] %> Per Game Stats</h2>
+		<table>
+		<tr><th>Year</th><th>Age</th><th>Team</th><th>G</th><th>GS</th><th>Minutes</th><th>FG%</th><th>3P%</th><th>2P%</th><th>FT%</th><th>Points</th><th>Assists</th><th>Rebounds</th><th>Steals</th><th>Blocks</th><th>Fouls</th></tr>
+		<% player1.forEach(function(year){%>
+		<tr>
+		<td><a href= "/season/<%=year["Year"]%>"><%= year["Year"] %></a></td>
+		<td><%= year["age"] %></td>
+		<td><a href= "/team/<%=year["team"]%>/<%=year["Year"]%>"><%= year["team"] %></a></td>
+		<td><%= year["gamesPlayed"] %></td>
+		<td><%= year["gamesStarted"] %></td>
+		<td><%= (year["minutes"]/year["gamesPlayed"]) %></td>
+		<td><%= year["fieldGoalPct"] %></td>
+		<td><%= year["3PfieldGoalPct"] %></td>
+		<td><%= year["2PfieldGoalPct"] %></td>
+		<td><%= year["freeThrowPct"] %></td>
+		<td><%= (year["Points"]/year["gamesPlayed"]) %></td>
+		<td><%= (year["Asts"]/year["gamesPlayed"]) %></td>
+		<td><%= (year["TotRebs"]/year["gamesPlayed"]) %></td>
+		<td><%= (year["Stls"]/year["gamesPlayed"]) %></td>
+		<td><%= (year["Blks"]/year["gamesPlayed"]) %></td>
+		<td><%= (year["Fouls"]/year["gamesPlayed"]) %></td>
+		</tr>
+		<%})%>
+		</table>
+		</div>
+		<%})%>
+		</div>
+	</body>
+</html>

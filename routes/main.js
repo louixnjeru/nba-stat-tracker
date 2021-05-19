@@ -102,7 +102,7 @@ module.exports = function(app)
 			if (err) {
 				res.redirect('/usr/174/findPlayer');
 			} else {
-				res.send(result);
+				res.render('player.ejs', {stats:results, name: stats[0]["name"]});
 			}
 		})
 	})
@@ -175,6 +175,14 @@ module.exports = function(app)
 		res.redirect(`/usr/174/player/${req.body.first}/${req.body.last}`);
 	})
 
+	app.get('/comparePlayers', function(req,res){
+		res.render('findPlayers.html');
+	})
+
+	app.post('/compare-stats', function(req,res){
+		res.redirect(`/usr/174/compare/${req.body.first1}/${req.body.last1}/${req.body.first2}/${req.body.last2}`);
+	})
+
 	app.get('/compare/:first1/:last1/:first2/:last2',function(req,res){
                 // Select statement for first player
 		var sqlQuery1 = ""
@@ -182,7 +190,6 @@ module.exports = function(app)
                         sqlQuery1 += `select * from ${year}totals where name = "${req.params.first1} ${req.params.last1}" union all `
                 }
                 sqlQuery1 += `select * from 2021totals where name = "${req.params.first1} ${req.params.last1}";`
-                console.log(sqlQuery1)
 		
 		// Select statement for second player
 		var sqlQuery2 = ""
@@ -190,30 +197,28 @@ module.exports = function(app)
                         sqlQuery2 += `select * from ${year}totals where name = "${req.params.first2} ${req.params.last2}" union all `
                 }
                 sqlQuery2 += `select * from 2021totals where name = "${req.params.first2} ${req.params.last2}";`
-                console.log(sqlQuery2)
 		
 		players = []
 		
                 db.query(sqlQuery1, (err,result1) => {
                         if (err) {
 				console.log(err.index);
-                                res.redirect('/usr/174/findPlayer');
+                                res.redirect('/usr/174/comparePlayers');
                         } else {
 				players.push(result1);
 				db.query(sqlQuery2, (err,result2) => {
                         	if (err) {
-                                	res.redirect('/usr/174/findPlayer');
+                                	res.redirect('/usr/174/comparePlayers');
                         	} else {
 					players.push(result2);
-                                	console.log(players);
-                                	res.send(players);
+                                	res.render('compare.ejs', {player1: players[0], player2: players[1], playerList: [1,2]})
                         	}
-                })
+                		})
                         }
                 })
         })
 	
-	app.get('/:year', function(req,res){
+	app.get('/season/:year', function(req,res){
 		var prev = req.params.year - 1;
 		
                 // Returns the teams that played in this year
@@ -223,11 +228,16 @@ module.exports = function(app)
 		 group by ${req.params.year}totals.team,abbv.team,${req.params.year}totals.year;`;
         	
 		// Returns the top points scorers
-		topPPGQuery = ` select ${req.params.year}totals.name,
-		 ${req.params.year}totals.team,
-		 round(${req.params.year}totals.points/${req.params.year}totals.gamesPlayed,2) as PPG
+		topPPGQuery = ` select name,team,
+		 round((points/gamesPlayed),2) as PPG
 		 from ${req.params.year}totals
+		 where gamesPlayed > 0.7*(select max(gamesPlayed) from ${req.params.year}totals)
+		 or gamesPlayed >= 0.7*82
+		 and id in (select min(id) from ${req.params.year}totals group by name)
 		 order by PPG desc limit 10;`;
+		
+		// Returns the top assist makers
+		
 
 		// Returns the players who played the most amount of games
 		ironmanQuery = ` select ${req.params.year}totals.name,
@@ -240,21 +250,21 @@ module.exports = function(app)
 		
 		// Returns the players whose points improved the most from the previous year
 		improveQuery = ` SELECT ${prev}totals.name,
-		 round(${prev}totals.points/${prev}totals.gamesPlayed,2) AS ${prev}PPG,
-		 ${prev}totals.team AS ${prev}Team,
-		 round((${req.params.year}totals.points/${req.params.year}totals.gamesPlayed),2) AS ${req.params.year} PPG,
-		 ${req.params.year}totals.team AS ${req.params.year}Team,
-		 round((${req.params.year}totals.points/${req.params.year}totals.gamesPlayed) - (${prev}totals.points/${prev}.gamesPlayed),2) AS PPGdifference 
+		 round(${prev}totals.points/${prev}totals.gamesPlayed,2) AS '${prev} PPG',
+		 ${prev}totals.team AS '${prev} Team',
+		 round(${req.params.year}totals.points/${req.params.year}totals.gamesPlayed,2) AS '${req.params.year} PPG',
+		 ${req.params.year}totals.team AS '${req.params.year} Team',
+		 round((${req.params.year}totals.points/${req.params.year}totals.gamesPlayed) - (${prev}totals.points/${prev}totals.gamesPlayed),2) AS PPGdifference 
 		 FROM ${prev}totals, ${req.params.year}totals 
 		 WHERE ${prev}totals.name = ${req.params.year}totals.name 
 		 and (${req.params.year}totals.gamesPlayed>0.7*(SELECT max(${req.params.year}totals.gamesPlayed) from ${req.params.year}totals) and ${prev}totals.gamesPlayed>0.7*(SELECT max(${prev}totals.gamesPlayed) from ${prev}totals)) 
 		 AND ${prev}totals.id in (select min(id) from ${prev}totals group by name)
-		 AND ${req.params.year}totals.id in (select min(id) from ${req.params.year}totalstotals group by name)
+		 AND ${req.params.year}totals.id in (select min(id) from ${req.params.year}totals group by name)
 		 ORDER BY PPGdifference DESC LIMIT 10`;
 		
 		// Adds the SQL queries together
 		//sqlQuery = teamQuery+topPPGQuery+ironmanQuery;
-		let sqlQuery = topPPGQuery;
+		let sqlQuery = teamQuery+topPPGQuery+ironmanQuery;
 		// If the year is 1950, there are no previous stats to obtain
 		if (req.params.year>1950) {
 			sqlQuery += improveQuery;
