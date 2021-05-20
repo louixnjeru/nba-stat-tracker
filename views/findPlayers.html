@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
         <head>
-                <title>Compare two players</title>
+                <title>Player Comparison</title>
         </head>
         <body>
                 <h1>Player Comparison</h1>
-                <p>Enter two players' names to comare their stats</p>
+                <p>Enter two players' names to compare their stats</p>
                 <form action="/compare-stats" method="POST">
                         <p>Compare:</p>
-			<input id="search-box" type="text" name="first1" placeholder="First Name">
-                        <input id="search-box" type="text" name="last1" placeholder="Last Name">
+			<input id="search-box" type="text" name="first1" placeholder="First Name" required>
+                        <input id="search-box" type="text" name="last1" placeholder="Last Name" required>
 			<p>to:</p>
-			<input id="search-box" type="text" name="first2" placeholder="First Name">
-                        <input id="search-box" type="text" name="last2" placeholder="Last Name">
+			<input id="search-box" type="text" name="first2" placeholder="First Name" required>
+                        <input id="search-box" type="text" name="last2" placeholder="Last Name" required>
 			<input type="submit" value="Compare Players">
                 </form>
                 <br>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
         <head>
-                <title>Find a player</title>
+                <title>Player Search</title>
         </head>
         <body>
-                <h1>Player Search</h1>
+                <h1>Find a player</h1>
                 <p>Enter the players name to view their stats</p>
                 <form action="/player-stats" method="POST">
-                        <input id="search-box" type="text" name="first" placeholder="First Name">
-                        <input id="search-box" type="text" name="last" placeholder="Last Name">
+                        <input id="search-box" type="text" name="first" placeholder="First Name" required>
+                        <input id="search-box" type="text" name="last" placeholder="Last Name" required>
 			<input type="submit" value="Find Player">
                 </form>
                 <br>

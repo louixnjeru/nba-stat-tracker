@@ -70,14 +70,37 @@ module.exports = function(app)
 	})
 */
 
+	
+	
+	app.get('/team/:teamName/',function(req,res){
+                var sqlQuery = ""
+                for (var year=1950; year<2021; year++){
+                        sqlQuery += `select year from ${year}totals where team = "${req.params.teamName}" and id = (select min(id) from ${year}totals where team = "${req.params.teamName}") union all `
+                }
+                sqlQuery += `select year from ${year}totals where team = "${req.params.teamName}" and id = (select min(id) from ${year}totals where team = "${req.params.teamName}"); select team from abbv where abbv = "${req.params.teamName}"`
+
+                db.query(sqlQuery, (err,result) => {
+                        if (err) {
+                                res.redirect('/usr/174/');
+                        } else {
+                                res.render('franchise.ejs', {team: [req.params.teamName, result[1][0]["team"]], seasons: result[0]})
+                                //res.send(result);
+                        }
+                })
+        })
+	
 	app.get('/team/:teamName/:year',function(req,res){
-		var sqlQuery = `select * from ${req.params.year}totals where team = "${req.params.teamName}";`
+		if (req.params.year < 1950 || req.params.year > 2021) {
+			res.redirect('/usr/174/team');
+		}
+		var sqlQuery = `select team from abbv where abbv = "${req.params.teamName}"; select * from ${req.params.year}totals where team = "${req.params.teamName}"`
 		db.query(sqlQuery, (err,result) => {
                         if (err) {
                                 res.redirect('/usr/174/');
                         } else {
-                                res.send(result);
-                        }
+                                res.render('team.ejs', {team: [result[0][0]["team"],req.params.year], players: result[1]})
+                        	//res.send(result);
+			}
                 })
 	})
 
@@ -97,12 +120,12 @@ module.exports = function(app)
 			sqlQuery += `select * from ${year}totals where name = "${req.params.first} ${req.params.last}" union all `
 		}
 		sqlQuery += `select * from 2021totals where name = "${req.params.first} ${req.params.last}";`
-		console.log(sqlQuery)
+		//console.log(sqlQuery)
 		db.query(sqlQuery, (err,result) => {
 			if (err) {
 				res.redirect('/usr/174/findPlayer');
 			} else {
-				res.render('player.ejs', {stats:results, name: stats[0]["name"]});
+				res.render('player.ejs', {player: result});
 			}
 		})
 	})
@@ -201,17 +224,16 @@ module.exports = function(app)
 		players = []
 		
                 db.query(sqlQuery1, (err,result1) => {
-                        if (err) {
-				console.log(err.index);
+                        if (err || result1.length == 0 ) {
                                 res.redirect('/usr/174/comparePlayers');
                         } else {
 				players.push(result1);
 				db.query(sqlQuery2, (err,result2) => {
-                        	if (err) {
+                        	if (err || result2.length == 0) {
                                 	res.redirect('/usr/174/comparePlayers');
                         	} else {
 					players.push(result2);
-                                	res.render('compare.ejs', {player1: players[0], player2: players[1], playerList: [1,2]})
+                                	res.render('compare.ejs', {players: players})
                         	}
                 		})
                         }

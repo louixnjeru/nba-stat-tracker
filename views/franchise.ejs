@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+        <title><%= team[1] %></title>
+</head>
+<body>
+        <h1><%= team[1] %> Index</h1>
+	<div class='seasons'>
+	<h2>Seasons</h2>
+	<%seasons.forEach(function(season){%>
+	<p><a href="/team/<%= team[0] %>/<%= season["year"] %>"><%= season["year"] %></a><p>
+	<%})%>
+	</div>
+</body>

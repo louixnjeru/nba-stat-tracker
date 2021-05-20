@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+<title><%= team[1] %> <%= team[0] %> Stats</title>
+</head>
+<body>
+<h1><%= team[1] %> <%= team[0] %></h1>
+<div class = 'player-stats-table'>
+<table>
+<tr>
+<th>Name</th><th>Age</th><th>G</th><th>GS</th><th>Minutes</th><th>FG%</th><th>3P%</th><th>2P%</th><th>FT%</th><th>Points</th><th>Assists</th><th>Rebounds</th><th>Steals</th><th>Blocks</th><th>Fouls</th></tr>
+<% players.forEach(function(player){%>
+<tr>
+<td><a href="/player/<%=player["name"].slice(0,player["name"].indexOf(" "))%>/<%=player["name"].slice(player["name"].indexOf(" ")+1,player["name"].length)%>"><%= player["name"] %></a></td>
+<td><%= player["age"] %></td>
+<td><%= player["gamesPlayed"] %></td>
+<td><%= player["gamesStarted"] %></td>
+<td><%= Math.round((player["minutes"]/player["gamesPlayed"])*100)/100 %></td>
+<td><%= Math.round((player["fieldGoalPct"]*100)) %>%</td>
+<td><%= Math.round((player["3PfieldGoalPct"]*100)) %>%</td>
+<td><%= Math.round((player["2PfieldGoalPct"]*100)) %>%</td>
+<td><%= Math.round((player["freeThrowPct"]*100)) %>%</td>
+<td><%= Math.round((player["Points"]/player["gamesPlayed"])*100)/100 %></td>
+<td><%= Math.round((player["Asts"]/player["gamesPlayed"])*100)/100 %></td>
+<td><%= Math.round((player["TotRebs"]/player["gamesPlayed"])*100)/100 %></td>
+<td><%= Math.round((player["Stls"]/player["gamesPlayed"])*100)/100 %></td>
+<td><%= Math.round((player["Blks"]/player["gamesPlayed"])*100)/100 %></td>
+<td><%= Math.round((player["Fouls"]/player["gamesPlayed"])*100)/100 %></td>
+</tr>
+<%})%>
+</table>
+</div>
+
+<div class = 'player-stats-table'>
+<table>
+<tr><th>Name</th><th>Age</th><th>G</th><th>GS</th><th>Minutes</th>
+<th>FGM</th><th>FGA</th><th>FG%</th>
+<th>3P FGM</th><th>3P FGA</th><th>3P%</th>
+<th>2P FGM</th><th>2P FGA</th><th>2P%</th>
+<th>FT</th><th>FTA</th><th>FT%</th>
+<th>Points</th><th>Assists</th>
+<th>Off Rebs</th><th>Def Rebs</th><th>Rebs</th>
+<th>Steals</th><th>Blocks</th><th>Fouls</th></tr>
+<% players.forEach(function(player){%>
+<tr>
+<td><a href="/player/<%=player["name"].slice(0,player["name"].indexOf(" "))%>/<%=player["name"].slice(player["name"].indexOf(" ")+1,player["name"].length)%>"><%= player["name"] %></a></td>
+<td><%= player["age"] %></td>
+<td><%= player["gamesPlayed"] %></td>
+<td><%= player["gamesStarted"] %></td>
+<td><%= player["minutes"] %></td>
+<td><%= player["fieldGoals"] %></td>
+<td><%= player["fieldGoalsAtt"] %></td>
+<td><%= Math.round((player["fieldGoalPct"]*100)) %>%</td>
+<td><%= player["3PfieldGoals"] %></td>
+<td><%= player["3PfieldGoalsAtt"] %></td>
+<td><%= Math.round((player["3PfieldGoalPct"]*100)) %>%</td>
+<td><%= player["2PfieldGoals"] %></td>
+<td><%= player["2PfieldGoalsAtt"] %></td>
+<td><%= Math.round((player["2PfieldGoalPct"]*100)) %>%</td>
+<td><%= player["freeThrows"] %></td>
+<td><%= player["freeThrowsAtt"] %></td>
+<td><%= Math.round((player["freeThrowPct"]*100)) %>%</td>
+<td><%= player["Points"] %></td>
+<td><%= player["Asts"] %></td>
+<td><%= player["OffRebs"] %></td>
+<td><%= player["DefRebs"] %></td>
+<td><%= player["TotRebs"] %></td>
+<td><%= player["Stls"] %></td>
+<td><%= player["Blks"] %></td>
+<td><%= player["Fouls"] %></td>
+</tr>
+<%})%>
+</table>
+</div>
+
+</body>
+</html>
