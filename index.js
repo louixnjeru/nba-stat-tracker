@@ -3,6 +3,8 @@ const request = require('request');
 const cron = require('node-cron');
 const app = express()
 const port = 8000
+const calendar = new Date()
+
 
 var bodyParser = require ('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,4 +40,4 @@ cron.schedule('0 0 */12 * * *', function() {
 });
 
 // Message confirming Express server is running
-app.listen(port, () => console.log(`Stats App running on port ${port}`))
+app.listen(port, () => console.log(`Stats App running on port ${port}, started ${calendar.getDate()}/${calendar.getMonth()+1}/${calendar.getFullYear()}`))

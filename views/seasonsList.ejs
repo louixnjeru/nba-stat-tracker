@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<head>
+        <title>NBA Seasons</title>
+</head>
+<body>
+	<div class="nav">
+	<ul class = "navbar">
+	<li id="nav-name">NBA Stat Tracker</li>
+	<li><a href="/">Home</a></li>
+	<li><a href="/findPlayer">Find a Player</a></li>
+	<li><a href="/comparePlayers">Compare Players</a></li>
+	<li><a href="/standings">Standings</a></li>
+	<li><a href="/teams">Teams</a></li>
+	<li><a href="/seasons">Seasons</a></li>
+	</ul>
+        <h1>List of NBA Seasons</h1>
+        <div class='seasons'>
+        <table>
+	<% for(var season=1950; season<2022; season+=3) { %>
+        <tr>
+	<td><a href="/season/<%= season %>/ %>"><%= season-1 %>-<%= season %></a></td>
+	<td><a href="/season/<%= season %>/ %>"><%= season %>-<%= season+1 %></a></td>
+	<td><a href="/season/<%= season %>/ %>"><%= season+1 %>-<%= season+2 %></a></td>
+        </tr>
+	<%}%>
+	</table>
+        </div>
+</body>

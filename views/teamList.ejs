@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+        <title>List of Franchises</title>
+</head>
+<body>
+        <h1>Franchises Index</h1>
+        <h3>List of NBA Franchises since 1950</h3>
+	<div class='seasons'>
+        <%franchises.forEach(function(team){%>
+        <p><a href="/team/<%= team["abbv"] %>/ %>"><%= team["team"] %></a><p>
+        <%})%>
+        </div>
+</body>
