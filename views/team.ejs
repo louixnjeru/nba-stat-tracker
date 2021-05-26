@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <head>
-<title><%= team[1] %> <%= team[0] %> Stats</title>
+<title><%= team[1]-1 %>-<%= team[1] %> <%= team[0] %> Stats</title>
+<link rel="stylesheet" type="text/css"   href="/css/style.css">
 </head>
 <body>
+
+<div class="nav">
+        <ul class = "navbar">
+        <li id="nav-name">NBA Stat Tracker</li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/findPlayer">Find a Player</a></li>
+        <li><a href="/comparePlayers">Compare Players</a></li>
+        <li><a href="/standings">Standings</a></li>
+        <li><a href="/teams">Teams</a></li>
+        <li><a href="/seasons">Seasons</a></li>
+        </ul>
+</div>
+
 <h1><%= team[1] %> <%= team[0] %></h1>
 <div class = 'player-stats-table'>
 <table>

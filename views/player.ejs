@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <head>
 	<title><%= player[0]["name"] %> Statistics</title>
+	<link rel="stylesheet" type="text/css"   href="/css/style.css">
 </head>
 <body>
+
+<div class="nav">
+        <ul class = "navbar">
+        <li id="nav-name">NBA Stat Tracker</li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/findPlayer">Find a Player</a></li>
+        <li><a href="/comparePlayers">Compare Players</a></li>
+        <li><a href="/standings">Standings</a></li>
+        <li><a href="/teams">Teams</a></li>
+        <li><a href="/seasons">Seasons</a></li>
+        </ul>
+</div>
+	<p><a href="/findPlayer">Find Another Player</a></p>
 	<h1><%= player[0]["name"] %></h1>
 	<div class='info'>
 		<table class='comparePlayerTable'>
@@ -15,6 +29,41 @@
                 <tr><th>Last Season</th><td><a href= "/season/<%=player[player.length-1]["Year"]%>"><%= player[player.length-1]["Year"] %></a>, <a href= "/team/<%=player[player.length-1]["team"]%>/<%=player[player.length-1]["Year"]%>"><%= player[player.length-1]["team"] %></a> (<%= player[player.length-1]["age"] %> years old)</td></tr>
                 </table>
 	</div>
+<% 
+        var age = []
+        var points = []
+        player.forEach(function(year){
+                age.push(year["age"]);
+                points.push(Math.round((year["Points"]/year["gamesPlayed"])*100)/100)
+        console.log(age);
+        console.log(points);
+        })
+        
+        %>
+	<div class="chart">
+	<canvas id="lineChart" width="100%" height="450"></canvas>
+	</div>
+	<script>
+	var ctx = document.getElementById("lineChart")
+	var lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                        labels: <%- JSON.stringify(age) %>,
+                        datasets: [{
+                                label: <%- JSON.stringify(player[0]["name"]) %>,
+                                data: <%- JSON.stringify(points) %>
+				borderColor: "#0000ff",
+                                fill: false
+                        }]
+                },
+                options: {
+                title: {
+                        display: true,
+                        text: `<%- JSON.stringify(player[0]["name"]) %> Points per Game`
+                }
+                }
+        })
+	</script>
 	<div class = 'player-stats-table'>
                 <h2><%= player[0]["name"] %> Per Game Stats</h2>
                 <table>

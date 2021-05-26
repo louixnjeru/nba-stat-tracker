@@ -1,6 +1,7 @@
 const express = require('express')
 const request = require('request');
 const cron = require('node-cron');
+const Chart = require('chart.js');
 const app = express()
 const port = 8000
 const calendar = new Date()
@@ -27,11 +28,13 @@ db.connect((err) => {
     	console.log('Stats Database initialised');
 });
 global.db = db;
+global.Chart = Chart
 
 // sets up Express web server
 require('./routes/main')(app);
 app.set('views',__dirname + '/views');
 app.set('view engine', 'ejs');
+app.use(express.static('public'));
 app.engine('html', require('ejs').renderFile);
 
 // Schedule tasks to be run on the server.

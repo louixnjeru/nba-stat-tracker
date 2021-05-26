@@ -16,11 +16,9 @@
         <h1>List of NBA Seasons</h1>
         <div class='seasons'>
         <table>
-	<% for(var season=1950; season<2022; season+=3) { %>
+	<% for(var season=1950; season<2022; season++) { %>
         <tr>
 	<td><a href="/season/<%= season %>/ %>"><%= season-1 %>-<%= season %></a></td>
-	<td><a href="/season/<%= season %>/ %>"><%= season %>-<%= season+1 %></a></td>
-	<td><a href="/season/<%= season %>/ %>"><%= season+1 %>-<%= season+2 %></a></td>
         </tr>
 	<%}%>
 	</table>

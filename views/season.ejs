@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<head>
+        <title><%= year-1 %>-<%= year %> NBA Season</title>
+	<link rel="stylesheet" type="text/css"   href="/css/style.css">
+</head>
+<body>
+	<div class="nav">
+	<ul class = "navbar">
+	<li id="nav-name">NBA Stat Tracker</li>
+	<li><a href="/">Home</a></li>
+	<li><a href="/findPlayer">Find a Player</a></li>
+	<li><a href="/comparePlayers">Compare Players</a></li>
+	<li><a href="/standings">Standings</a></li>
+	<li><a href="/teams">Teams</a></li>
+	<li><a href="/seasons">Seasons</a></li>
+	</ul>
+	</div>   
+	
+	<h1><%= year-1 %>-<%= year %> Season</h1>
+	<br> 
+	<div class='teams'>
+        <h3><%= year-1 %>-<%= year %> Teams</h3>
+	<%teams.forEach(function(team){%>
+        <p><a href="/team/<%= team["abbv"] %>/<%= year %>/ %>"><%= team["team"] %></a></p>
+        <%})%>
+        </div>
+	
+	<div class='points'>
+	<h3><%= year-1 %>-<%= year %> Top Points Scorers</h3>
+	<p>These players averaged the most points scored per game throughout the season</p>
+	<p>*<i>Players must have played 70% of games in the season to qualify (e.g. 58 games for a 82 game season)</i></p>
+	<table>
+	<tr><th>Player</th><th>Team</th><th>PPG</th></tr>
+	<%topPointsScorers.forEach(function(player){%>
+        <tr>
+	<td><a href="/player/<%=player["name"].slice(0,player["name"].indexOf(" "))%>/<%=player["name"].slice(player["name"].indexOf(" ")+1,player["name"].length)%>"><%= player["name"] %></a></td>
+	<%if( player["team"] != "TOT" ){ %>
+	<td><a href="/team/<%=player["team"]%>/<%= year %>"><%= player["team"] %></a></td>
+	<%} else {%>
+	<td><%= player["team"] %></td>
+	<%}%>
+	<td><%= player["PPG"] %></td>
+	</tr>
+        <%})%>
+        </table>
+	</div>
+	
+	<%if(year > 1950){ %>
+	<div class='improve'>
+        <h3><%= year-1 %>-<%= year %> Most Improved Scorers</h3>
+        <p>These players increased their points average by the most points over last season</p>
+        <p>*<i>Players must have played 70% of games in each season to qualify (e.g. 58 games for a 82 game season)</i></p>
+        <table>
+        <tr><th>Player</th><th>Team</th><th>Points per Game</th><th>Increase</th></tr>
+        <%mostImproved.forEach(function(player){%>
+        <tr>
+        <td><a href="/player/<%=player["name"].slice(0,player["name"].indexOf(" "))%>/<%=player["name"].slice(player["name"].indexOf(" ")+1,player["name"].length)%>"><%= player["name"] %></a></td>
+        <%if( player["newTeam"] != "TOT"){%>
+        <td><a href="/team/<%=player["newTeam"]%>/<%= year %>"><%= player["newTeam"] %></a></td>
+        <%} else {%>
+        <td><%= player["newTeam"] %></td>
+        <%}%>
+	<td><%= player["oldPPG"] %> -> <%= player["newPPG"] %></td>
+	<td class='up'>+ <%= Math.round(100*((player["newPPG"]/player["oldPPG"])-1)) %>%</td>
+	</tr>
+        <%})%>
+        </table>
+        </div>
+	<%}%>
+	
+	<div class='ironmen'>
+        <h3><%= year-1 %>-<%= year %> Ironmen</h3>
+	<p>These players played in all available games for their team</p>
+	<p>*<i>Players may have more games than others, indicating they were traded during the season</i></p>
+        <table>
+        <tr><th>Player</th><th>Team</th><th>Games Played</th></tr>
+        <%ironmen.forEach(function(player){%>
+        <tr>
+        <td><a href="/player/<%=player["name"].slice(0,player["name"].indexOf(" "))%>/<%=player["name"].slice(player["name"].indexOf(" ")+1,player["name"].length)%>"><%= player["name"] %></a></td>
+        <%if( player["team"] != "TOT" ){ %>
+        <td><a href="/team/<%=player["team"]%>/<%= year %>"><%= player["team"] %></a></td>
+        <%} else {%>
+        <td><%= player["team"] %></td>
+        <%}%>
+        <td><%= player["gamesPlayed"] %></td>
+        </tr>
+        <%})%>
+        </table>
+        </div>
+	
+</body>

@@ -89,8 +89,8 @@ module.exports = function(app)
                 sqlQuery += `select year from ${year}totals where team = "${req.params.teamName}" and id = (select min(id) from ${year}totals where team = "${req.params.teamName}"); select team from abbv where abbv = "${req.params.teamName}"`;
 
                 db.query(sqlQuery, (err,result) => {
-                        if (err) {
-                                res.redirect('/usr/174/');
+                        if (err || result.length == 0) {
+                        	res.send(`<p>Team cannot be found </p><br><a href="/teams">Go back</a>`);
                         } else {
                                 res.render('franchise.ejs', {team: [req.params.teamName, result[1][0]["team"]], seasons: result[0]});
                                 //res.send(result);
@@ -104,8 +104,8 @@ module.exports = function(app)
 		}
 		var sqlQuery = `select team from abbv where abbv = "${req.params.teamName}"; select * from ${req.params.year}totals where team = "${req.params.teamName}"`;
 		db.query(sqlQuery, (err,result) => {
-                        if (err) {
-                                res.redirect('/usr/174/');
+                        if (err || result.length == 0) {
+                                res.send(`<p>Team cannot be found </p><br><a href="/teams">Go back</a>`);
                         } else {
                                 res.render('team.ejs', {team: [result[0][0]["team"],req.params.year], players: result[1]});
                         	//res.send(result);
@@ -131,7 +131,7 @@ module.exports = function(app)
 		sqlQuery += `select * from 2021totals where name = "${req.params.first} ${req.params.last}" COLLATE utf8_general_ci`;
 		//console.log(sqlQuery)
 		db.query(sqlQuery, (err,result) => {
-			if (err) {
+			if (err || result.length == 0) {
 				res.send(`<p>${req.params.first1} ${req.params.last1} is not an NBA player.</p><br><a href="/findPlayer">Go back</a>`);
 			} else {
 				res.render('player.ejs', {player: result});
@@ -254,13 +254,17 @@ module.exports = function(app)
 	})
 		
 	app.get('/season/:year', function(req,res){
+		if (req.params.year < 1950 || req.params.year > 2021) {
+			res.redirect('/usr/174/seasons/');
+		}
+		
 		var prev = req.params.year - 1;
 		
                 // Returns the teams that played in this year
 		teamQuery = `select min(${req.params.year}totals.id) as id, ${req.params.year}totals.team, abbv.abbv, abbv.team, ${req.params.year}totals.year
 		 from ${req.params.year}totals, abbv
 		 where ${req.params.year}totals.team=abbv.abbv
-		 group by ${req.params.year}totals.team,abbv.team,${req.params.year}totals.year;`;
+		 group by ${req.params.year}totals.team,abbv.team,abbv.abbv,${req.params.year}totals.year;`;
         	
 		// Returns the top points scorers
 		topPPGQuery = ` select name,team,
@@ -285,10 +289,10 @@ module.exports = function(app)
 		
 		// Returns the players whose points improved the most from the previous year
 		improveQuery = ` SELECT ${prev}totals.name,
-		 round(${prev}totals.points/${prev}totals.gamesPlayed,2) AS '${prev} PPG',
-		 ${prev}totals.team AS '${prev} Team',
-		 round(${req.params.year}totals.points/${req.params.year}totals.gamesPlayed,2) AS '${req.params.year} PPG',
-		 ${req.params.year}totals.team AS '${req.params.year} Team',
+		 round(${prev}totals.points/${prev}totals.gamesPlayed,2) AS oldPPG,
+		 ${prev}totals.team AS oldTeam,
+		 round(${req.params.year}totals.points/${req.params.year}totals.gamesPlayed,2) AS newPPG,
+		 ${req.params.year}totals.team AS newTeam,
 		 round((${req.params.year}totals.points/${req.params.year}totals.gamesPlayed) - (${prev}totals.points/${prev}totals.gamesPlayed),2) AS PPGdifference 
 		 FROM ${prev}totals, ${req.params.year}totals 
 		 WHERE ${prev}totals.name = ${req.params.year}totals.name 
@@ -307,11 +311,26 @@ module.exports = function(app)
 		
 		db.query(sqlQuery, (err,results) => {
 			if (err) {
-				throw err;
+				console.log(err);
+				res.redirect('/usr/174/seasons/');
 			} else {
-				res.send(results)
+				res.render('season.ejs',{year: results[0][0]["year"], teams: results[0], topPointsScorers: results[1], ironmen: results[2], mostImproved: results[3]});
 			}
 		})
 	})
 
+	app.get('/top', function(req,res){
+		var statDay = new Date(Date.now() - 24*60*60*1000)
+		var scraper = require('table-scraper');
+                var months = []
+		for (var i = 0; i<12; i++){
+			months.push(i+1);
+		}
+		scraper.get(
+		//`https://www.basketball-reference.com/friv/dailyleaders.fcgi?month=${statDay.getMonth}&day=${statDay.getDay}&year=${statDay.getFullYear}`
+		//`http://www.espn.com/nba/dailyleaders/_/date/${statDay.getFullYear}${statDay.getMonth}${statDay.getDay}`
+		"https://basketball.realgm.com/nba/daily-leaders"
+		).then(function(tableData) {
+                        res.send(tableData)})
+	})
 }
