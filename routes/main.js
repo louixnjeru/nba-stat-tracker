@@ -89,8 +89,8 @@ module.exports = function(app)
                 sqlQuery += `select year from ${year}totals where team = "${req.params.teamName}" and id = (select min(id) from ${year}totals where team = "${req.params.teamName}"); select team from abbv where abbv = "${req.params.teamName}"`;
 
                 db.query(sqlQuery, (err,result) => {
-                        if (err || result.length == 0) {
-                        	res.send(`<p>Team cannot be found </p><br><a href="/teams">Go back</a>`);
+			if (err || result[0].length == 0) {
+                        	res.redirect('/usr/174/teams');
                         } else {
                                 res.render('franchise.ejs', {team: [req.params.teamName, result[1][0]["team"]], seasons: result[0]});
                                 //res.send(result);
@@ -100,17 +100,18 @@ module.exports = function(app)
 	
 	app.get('/team/:teamName/:year',function(req,res){
 		if (req.params.year < 1950 || req.params.year > 2021) {
-			res.redirect('/usr/174/team');
-		}
+			res.redirect(`/usr/174/team/${req.params.teamName}`);
+		} else {
 		var sqlQuery = `select team from abbv where abbv = "${req.params.teamName}"; select * from ${req.params.year}totals where team = "${req.params.teamName}"`;
 		db.query(sqlQuery, (err,result) => {
-                        if (err || result.length == 0) {
-                                res.send(`<p>Team cannot be found </p><br><a href="/teams">Go back</a>`);
+			if (err || result[1].length == 0) {
+                                res.send(`<p>${req.params.year} ${result[0][0]["team"]} is not a team.</p><br><a href="/team/${req.params.teamName}">Go back</a>`);
                         } else {
                                 res.render('team.ejs', {team: [result[0][0]["team"],req.params.year], players: result[1]});
                         	//res.send(result);
 			}
                 })
+		}
 	})
 
 	app.get('/name/:player',function(req,res){

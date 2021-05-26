@@ -3,6 +3,7 @@
         <head>
                 <title><%= players[0][0]["name"] %> and <%= players[1][0]["name"] %> comparison</title>
 		<link rel="stylesheet" type="text/css"   href="/css/style.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.0/chart.min.js"></script>
 </head>
 <body>
 
@@ -43,6 +44,79 @@
 			</div>
 			<%})%>
 		</div>
+		
+	<% 
+	// Stores stats for the first player
+        var age1 = []
+        var points1 = []
+	// Stores stats for the second player
+	var age2 = []
+        var points2 = []
+	
+	// Pushes stats from JSON file into arrays
+        players[0].forEach(function(year){
+                points1.push(Math.round((year["Points"]/year["gamesPlayed"])*100)/100)
+	})
+
+	players[1].forEach(function(year){
+                points2.push(Math.round((year["Points"]/year["gamesPlayed"])*100)/100)
+	})
+
+	var numSeasons;
+	var seasons = [];
+	
+	// Finds the maximum amount of seasons
+	if (players[0].length > players[1].length) {
+		numSeasons = players[0].length;
+	} else {
+		numSeasons = players[1].length;
+	}
+
+	for (var i=0; i<numSeasons; i++){
+		seasons.push(i+1);
+	}
+        %>
+        <div class="chart">
+        <h2>Points per Game Graph</h2>
+	<canvas id="lineChart" width="800" height="450"></canvas>
+        </div>
+        <script>
+        var ctx = document.getElementById("lineChart")
+        var lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                        labels: <%- JSON.stringify(seasons) %>,
+                        datasets: [{
+                                label: <%- JSON.stringify(players[0][0]["name"]) %>,
+                                data: <%- JSON.stringify(points1) %>,
+                                borderColor: "#0000ff",
+                                fill: false
+                        },{
+                                label: <%- JSON.stringify(players[1][0]["name"]) %>,
+                                data: <%- JSON.stringify(points2) %>,
+                                borderColor: "#ff0000",
+                                fill: false
+                        }]
+                },
+                options: {
+                        plugins:{
+                                title: {
+                                        display: true,
+                                        text: `Points per Game Comparison`
+                                }
+                        },
+                        scales: {
+                                x: {
+                                        title: {display: true, text: 'Season'}
+                                },
+                                y: {
+                                        title: {display: true, text: 'Points Per Game'}
+                                }
+                        }
+                }
+        })
+        </script>
+		
 		<div class='stats'>
 		<% players.forEach(function(player){%>
 		<div class = 'player-stats-table'>

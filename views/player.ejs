@@ -2,6 +2,7 @@
 <head>
 	<title><%= player[0]["name"] %> Statistics</title>
 	<link rel="stylesheet" type="text/css"   href="/css/style.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.0/chart.min.js"></script>
 </head>
 <body>
 
@@ -29,7 +30,7 @@
                 <tr><th>Last Season</th><td><a href= "/season/<%=player[player.length-1]["Year"]%>"><%= player[player.length-1]["Year"] %></a>, <a href= "/team/<%=player[player.length-1]["team"]%>/<%=player[player.length-1]["Year"]%>"><%= player[player.length-1]["team"] %></a> (<%= player[player.length-1]["age"] %> years old)</td></tr>
                 </table>
 	</div>
-<% 
+	<% 
         var age = []
         var points = []
         player.forEach(function(year){
@@ -41,9 +42,10 @@
         
         %>
 	<div class="chart">
-	<canvas id="lineChart" width="100%" height="450"></canvas>
+	<canvas id="lineChart" width="800" height="450"></canvas>
 	</div>
 	<script>
+	//var Chart = require('chart.js');
 	var ctx = document.getElementById("lineChart")
 	var lineChart = new Chart(ctx, {
                 type: 'line',
@@ -51,16 +53,26 @@
                         labels: <%- JSON.stringify(age) %>,
                         datasets: [{
                                 label: <%- JSON.stringify(player[0]["name"]) %>,
-                                data: <%- JSON.stringify(points) %>
+                                data: <%- JSON.stringify(points) %>,
 				borderColor: "#0000ff",
                                 fill: false
                         }]
                 },
                 options: {
-                title: {
-                        display: true,
-                        text: `<%- JSON.stringify(player[0]["name"]) %> Points per Game`
-                }
+                	plugins:{
+				title: {
+                        		display: true,
+                        		text: `<%- JSON.parse(JSON.stringify(player[0]["name"])) %> Points per Game`
+                		}
+			},
+			scales: {
+				x: {
+					title: {display: true, text: 'Age'}
+				},
+				y: {
+					title: {display: true, text: 'Points Per Game'}
+				}
+			}
                 }
         })
 	</script>
