@@ -70,9 +70,41 @@ div {
 	float: auto;
 }
 
+.player-info {
+	width: 100%;
+}
+
+@media only screen and (min-width: 971px) {
+	/*.player-info:nth-child(1) {
+		left: 0%;
+		position: relative;
+	}
+
+	.player-info:nth-child(2) {
+		left: 25vw;
+		position: relative;
+	}*/
+
+	.player-info table {
+		width: 100%;
+	}
+
+	.info {
+		display: flex;
+		width: 100%;
+	}
+}
+
 #nav-name {
 	font-weight: 800;
 	font-size: 22px;
+}
+
+#hof {
+	font-weight: 800;
+	font-size: 17px;
+	color: Gold;
+	padding-bottom: 10px;
 }
 
 @media only screen and (max-width: 970px) {
@@ -82,6 +114,15 @@ div {
 
 	ul {
 		float: auto;
+	}
+	
+	div {
+        	overflow-x: scroll;
+	}
+
+	.player-info {
+        	display: block;
+        	
 	}
 }
 

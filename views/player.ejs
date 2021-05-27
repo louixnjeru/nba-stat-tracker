@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <head>
+	<!-- Reads name from ejs parameter -->
 	<title><%= player[0]["name"] %> Statistics</title>
-	<link rel="stylesheet" type="text/css"   href="/css/style.css">
+	<!-- Link to external stylesheet -->
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<!-- Link to external chart.js file -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.0/chart.min.js"></script>
 </head>
 <body>
-
+<!-- Navigation Bar -->
 <div class="nav">
         <ul class = "navbar">
         <li id="nav-name">NBA Stat Tracker</li>
@@ -19,10 +22,11 @@
 </div>
 	<p><a href="/findPlayer">Find Another Player</a></p>
 	<h1><%= player[0]["name"] %></h1>
+	<!-- Player Information Table -->
 	<div class='info'>
 		<table class='comparePlayerTable'>
 		<% if (player[0]["inHOF"]==1) { %>
-                <tr><th colspan=2 >Hall Of Famer</th></tr>
+                <tr><td id='hof'>Hall Of Famer</td></tr>
                 <% } %>
                 <tr><th>Position</th><td><%= player[Math.floor(player.length/2)]["position"] %></td></tr>
                 <tr><th>Last Team</th><td><%= player[player.length-1]["team"] %></td></tr>
@@ -30,22 +34,23 @@
                 <tr><th>Last Season</th><td><a href= "/season/<%=player[player.length-1]["Year"]%>"><%= player[player.length-1]["Year"] %></a>, <a href= "/team/<%=player[player.length-1]["team"]%>/<%=player[player.length-1]["Year"]%>"><%= player[player.length-1]["team"] %></a> (<%= player[player.length-1]["age"] %> years old)</td></tr>
                 </table>
 	</div>
+	<!-- Code to accumulate points and age infomation for chart -->
 	<% 
         var age = []
         var points = []
+	//Pushes the players age and points average into arrays
         player.forEach(function(year){
                 age.push(year["age"]);
                 points.push(Math.round((year["Points"]/year["gamesPlayed"])*100)/100)
-        console.log(age);
-        console.log(points);
         })
         
         %>
+	<!-- Canvas to display line chart -->
 	<div class="chart">
 	<canvas id="lineChart" width="800" height="450"></canvas>
 	</div>
+	<!-- Script to create line chart -->
 	<script>
-	//var Chart = require('chart.js');
 	var ctx = document.getElementById("lineChart")
 	var lineChart = new Chart(ctx, {
                 type: 'line',
@@ -76,11 +81,13 @@
                 }
         })
 	</script>
+	<!-- Player per game table -->
 	<div class = 'player-stats-table'>
                 <h2><%= player[0]["name"] %> Per Game Stats</h2>
                 <table>
                 <tr><th>Year</th><th>Age</th><th>Team</th><th>G</th><th>GS</th><th>Minutes</th><th>FG%</th><th>3P%</th><th>2P%</th><th>FT%</th><th>Points</th><th>Assists</th><th>Rebounds</th><th>Steals</th><th>Blocks</th><th>Fouls</th></tr>
-                <% player.forEach(function(year) { %>
+                <!-- Loops through each season to input the player stats -->
+		<% player.forEach(function(year) { %>
                 <tr>
                 <td><a href= "/season/<%=year["Year"]%>"><%= year["Year"] %></a></td>
                 <td><%= year["age"] %></td>
@@ -107,6 +114,7 @@
                 </table>
                 </div>
 
+		<!-- Player totals table -->
 		<div class = 'player-stats-table'>
                 <h2><%= player[0]["name"] %> Totals</h2>
                 <table>

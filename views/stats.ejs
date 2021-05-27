@@ -6,6 +6,7 @@
 </head>
 <body>
 
+<!-- Navigation Bar -->
 <div class="nav">
         <ul class = "navbar">
         <li id="nav-name">NBA Stat Tracker</li>
@@ -20,6 +21,7 @@
 
                 <h1>NBA Standings</h1>
                 <br>
+		<!-- Standings Table -->
 		<div id='east'>
 		<h2>Eastern Conference</h2>
 		<table>
@@ -27,6 +29,7 @@
 			<th>Team</th><th>W-L</th>
 			<th>Win %</th><th>Last 10</th><th>Streak</th>
 			</tr>
+			<!-- Loops through standings array to extract values to place in table -->
 			<% east.forEach(function(team) { %>
 			<tr>                	
 			<td><%= team['W-L'] %></td>
@@ -38,7 +41,6 @@
                 	<% }) %>
                 </table>
 		</div>
-		<br>
 		<div id='west'>
 		<h2>Western Conference</h2>
 		<table>
@@ -58,6 +60,13 @@
                 </table>
 		</div>
                 <br>
+		<!-- Standings Key -->
+		<div>
+		<h4>Key</h4>
+		<p>Z - Clinched Conference</p>
+		<p>Y - Chinched Division</p>
+		<p>X - Clinched Playoff Berth</p>
+		</div>
                 <a href='/'>Home</a>
         </body>
 </html>

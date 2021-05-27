@@ -4,6 +4,7 @@
 	<link rel="stylesheet" type="text/css"   href="/css/style.css">
 </head>
 <body>
+	<!-- Navigation Bar -->
 	<div class="nav">
 	<ul class = "navbar">
 	<li id="nav-name">NBA Stat Tracker</li>
@@ -17,13 +18,16 @@
 	</div>   
 	
 	<h1><%= year-1 %>-<%= year %> Season</h1> 
+	<!-- Teams Section -->
 	<div class='teams'>
         <h3><%= year-1 %>-<%= year %> Teams</h3>
+	<!-- Loops through each team that played that season -->
 	<%teams.forEach(function(team){%>
         <p><a href="/team/<%= team["abbv"] %>/<%= year %>/ %>"><%= team["team"] %></a></p>
         <%})%>
         </div>
 	
+	<!-- Points Section -->
 	<div class='points'>
 	<h3><%= year-1 %>-<%= year %> Top Points Scorers</h3>
 	<p>These players averaged the most points scored per game throughout the season</p>
@@ -44,6 +48,8 @@
         </table>
 	</div>
 	
+	<!--Improved players section  -->
+	<!-- There is no previous season to the 1950 season -->
 	<%if(year > 1950){ %>
 	<div class='improve'>
         <h3><%= year-1 %>-<%= year %> Most Improved Scorers</h3>
@@ -67,13 +73,15 @@
         </div>
 	<%}%>
 	
+	<!-- Ironmen section -->
 	<div class='ironmen'>
         <h3><%= year-1 %>-<%= year %> Ironmen</h3>
 	<p>These players played in all available games for their team</p>
 	<p>*<i>Players may have more games than others, indicating they were traded during the season</i></p>
         <table>
         <tr><th>Player</th><th>Team</th><th>Games Played</th></tr>
-        <%ironmen.forEach(function(player){%>
+        <!-- Loops through each record returned by the SQL Query -->
+	<%ironmen.forEach(function(player){%>
         <tr>
         <td><a href="/player/<%=player["name"].slice(0,player["name"].indexOf(" "))%>/<%=player["name"].slice(player["name"].indexOf(" ")+1,player["name"].length)%>"><%= player["name"] %></a></td>
         <%if( player["team"] != "TOT" ){ %>

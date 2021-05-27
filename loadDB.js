@@ -69,7 +69,8 @@ scraper.get(
 	`https://www.basketball-reference.com/leagues/NBA_${year}_totals.html`
 	).then(function(tableData) {
 	console.log("Table Scraped");
-        db.query(createTableQuery);
+        // Creates the table
+	db.query(createTableQuery);
 	console.log("Database created");
 	// Loops through all the players on the webpage
 	for (player in tableData[0]) {

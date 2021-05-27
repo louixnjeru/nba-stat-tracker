@@ -2,13 +2,15 @@ const express = require('express')
 const request = require('request');
 const cron = require('node-cron');
 const Chart = require('chart.js');
-const app = express()
-const port = 8000
-const calendar = new Date()
-
+const app = express();
+const port = 8000;
+const calendar = new Date();
+const path = require('path');
 
 var bodyParser = require ('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
+//app.use('/public', express.static(__dirname + '/public'));
+app.use(express.static('public'));
 
 const mysql = require('mysql');
 
@@ -34,7 +36,9 @@ global.Chart = Chart
 require('./routes/main')(app);
 app.set('views',__dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
+//app.use(express.static('public'));
+//app.use('/static', express.static(path.join(__dirname, '/public')));
+//app.set('public',__dirname + '/public');
 app.engine('html', require('ejs').renderFile);
 
 // Schedule tasks to be run on the server.

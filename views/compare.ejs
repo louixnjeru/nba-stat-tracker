@@ -25,7 +25,7 @@
 			<% players.forEach(function(player){%>
 			<div class='player-info'>
 				<table class='comparePlayerTable'>
-				<tr><th colspan="2"><a href="/player/"><%= player[0]["name"] %></a></th></tr>
+				<tr><th colspan="2"><a href="/player/<%=player[0]["name"].slice(0,player[0]["name"].indexOf(" "))%>/<%=player[0]["name"].slice(player[0]["name"].indexOf(" ")+1,player[0]["name"].length)%>"><%= player[0]["name"] %></a></th></tr>
 				<tr><th>Age</th><td><%= player[player.length-1]["age"]+(2021-player[player.length-1]["Year"]) %></td></tr>
 				<tr><th>Position</th><td><%= player[Math.floor(player.length/2)]["position"] %></td></tr>
 				<tr><th>Seasons Played</th><td><%= player.length %></td></tr>
@@ -65,13 +65,14 @@
 	var numSeasons;
 	var seasons = [];
 	
-	// Finds the maximum amount of seasons
+	// Finds the player who played the most amount of seasons and sets the numSeasons variable
 	if (players[0].length > players[1].length) {
 		numSeasons = players[0].length;
 	} else {
 		numSeasons = players[1].length;
 	}
 
+	// Populates the array to fill the x axis labels
 	for (var i=0; i<numSeasons; i++){
 		seasons.push(i+1);
 	}

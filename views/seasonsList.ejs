@@ -4,6 +4,7 @@
 	<link rel="stylesheet" type="text/css"   href="/css/style.css">
 </head>
 <body>
+	<!-- Navigation Bar -->
 	<div class="nav">
 	<ul class = "navbar">
 	<li id="nav-name">NBA Stat Tracker</li>
@@ -16,6 +17,7 @@
 	</ul>
         <h1>List of NBA Seasons</h1>
         <div class='seasons'>
+	<!-- Creates a clickable link for each season -->
 	<% for(var season=1950; season<2022; season++) { %>
         <p><a href="/season/<%= season %>/ %>"><%= season-1 %>-<%= season %></a></p>
 	<%}%>
