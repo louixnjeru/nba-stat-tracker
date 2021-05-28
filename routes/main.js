@@ -60,18 +60,27 @@ module.exports = function(app)
         });
 */
 	
-/*	
+/*
+	// Gets team abbreviations and inserts them into abbv table
 	app.get('/abbv', function(req,res) {
+		// Imports table scraper
 		var scraper = require('table-scraper');
                 scraper.get(
 		"https://sportsdelve.wordpress.com/abbreviations/"
 		).then(function(tableData) {
+			// Array to store new records
 			var teams = []
+			// Loops through table
 			for (var abbv in tableData[2]) {
+				// Creates an array that will become a record in the abbv table
+				// The array contains the abbreviation and the team name
 				let team = [tableData[2][abbv][0],tableData[2][abbv][1]];
+				// Pushes rhe new record into the teams array
 				teams.push(team);   
 			}
+			// SQL Query to insert new records
 			sqlQuery = "insert into abbv(abbv,team) values ?"
+			// Runs insert query
 			db.query(sqlQuery, [teams]);
 		})
 	})
@@ -127,7 +136,7 @@ module.exports = function(app)
 				// If no players are returned, the team did not exist in that year
 				if (err || result[1].length == 0) {
                                 	// A message tells the user to go back to that team's franchise index
-					res.send(`<p>${req.params.year} ${result[0][0]["team"]} is not a team.</p><br><a href="/team/${req.params.teamName}">Go back</a>`);
+					res.send(`<p>Cannot find team.</p><br><a href="/teams/">Go back</a>`);
                         	} else {
 					// Otherwise, the team page is loaded
                                 	res.render('team.ejs', {team: [result[0][0]["team"],req.params.year], players: result[1]});
@@ -292,7 +301,7 @@ module.exports = function(app)
 		// If the year is not stored in the database then the user is redirected to the season index
 		if (req.params.year < 1950 || req.params.year > 2021) {
 			res.redirect('/usr/174/seasons/');
-		}
+		} else {
 		
 		// Calculate the previous year to use in SQL queries
 		var prev = req.params.year - 1;
@@ -355,6 +364,7 @@ module.exports = function(app)
 				res.render('season.ejs',{year: results[0][0]["year"], teams: results[0], topPointsScorers: results[1], ironmen: results[2], mostImproved: results[3]});
 			}
 		})
+		}
 	})
 
 /*
